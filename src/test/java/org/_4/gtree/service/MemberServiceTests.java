@@ -18,7 +18,7 @@ public class MemberServiceTests {
   @Test
   public void 추가() {
     MemberEntity e = MemberEntity.builder()
-        .id("test")
+        .userId("test")
         .pw("1234")
         .nickname("tomhoon")
         .build();

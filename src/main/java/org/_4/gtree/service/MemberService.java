@@ -16,6 +16,14 @@ public class MemberService {
 
   private final MemberRepository memberRepository;
 
+  public Boolean login(MemberDTO dto) {
+    MemberEntity entity = memberRepository.findByUserId(dto.getUserId()).orElseThrow();
+
+    String inputPw = dto.getPw();
+
+    return inputPw.equals(entity.getPw());
+  }
+
   public MemberDTO getMember(Long mno) {
     Optional<MemberEntity> res = memberRepository.findById(mno);
     MemberEntity entity = res.orElseThrow(() -> new NoSuchElementException("entity가 없습니다."));

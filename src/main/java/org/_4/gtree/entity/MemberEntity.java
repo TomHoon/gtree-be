@@ -27,7 +27,7 @@ public class MemberEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long mno;
 
-  private String id;
+  private String userId;
   private String pw;
 
   @Builder.Default

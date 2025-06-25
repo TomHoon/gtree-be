@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MemberDTO {
 
   private Long mno;
-  private String id;
+  private String userId;
   private String pw;
   private int degree;
   private String nickname;
@@ -20,7 +20,7 @@ public class MemberDTO {
 
   public MemberDTO(MemberEntity e) {
     this.mno = e.getMno();
-    this.id = e.getId();
+    this.userId = e.getUserId();
     this.degree = e.getDegree();
     this.nickname = e.getNickname();
     this.isSocial = e.getIsSocial();
@@ -28,7 +28,7 @@ public class MemberDTO {
 
   public MemberEntity toEntity() {
     MemberEntity e = MemberEntity.builder()
-        .id(this.id)
+        .userId(this.userId)
         .pw(this.pw)
         .nickname(this.nickname)
         .degree(this.degree)
