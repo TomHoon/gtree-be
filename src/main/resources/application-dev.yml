@@ -4,9 +4,10 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/gtree
+    # url: jdbc:mariadb://localhost:3306/gtree
+    url: jdbc:mariadb://172.19.0.2:3306/gtree
     username: root
-    password: 1234
+    password: 2846
     hikari: # DB Pool Size
       minimum-idle: 2
       maximum-pool-size: 5
@@ -20,7 +21,7 @@ spring:
     show-sql: true
 
 server:
-  port: 22000
+  port: 23000
   servlet:
     encoding:
       charset: UTF-8

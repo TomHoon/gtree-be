@@ -28,7 +28,6 @@ public class MemberController {
   private final MemberService memberService;
 
   @PostMapping("/login")
-  @CrossOrigin(origins = "http://127.0.0.1:5500")
   public ResponseEntity<ApiResponse<Map<String, Boolean>>> login(@RequestBody MemberDTO dto) {
     Boolean isMember = memberService.login(dto);
     return ResponseEntity.ok(ApiResponse.success(Map.of("로그인처리", isMember)));
