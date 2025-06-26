@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import jakarta.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api/v1/file")
+@CrossOrigin("*")
 public class FileController {
 
   private static final String UPLOAD_DIR = "uploads/";
@@ -33,7 +36,7 @@ public class FileController {
   }
 
   @PostMapping("/upload")
-  public ResponseEntity<String> handleFileUpload(@RequestBody MultipartFile file) {
+  public ResponseEntity<Map<String, String>> handleFileUpload(@RequestBody MultipartFile file) {
 
     Path uploadPath = Paths.get(UPLOAD_DIR);
 
@@ -48,7 +51,7 @@ public class FileController {
       e.printStackTrace();
     }
 
-    return ResponseEntity.ok("okay");
+    return ResponseEntity.ok(Map.of("imageUrl", filePath.toString()));
   }
 
 }
