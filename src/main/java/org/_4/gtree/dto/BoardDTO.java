@@ -17,6 +17,7 @@ public class BoardDTO {
 
   private String title;
   private String content;
+  private String category;
 
   private LocalDate createdAt;
 
@@ -26,6 +27,8 @@ public class BoardDTO {
 
   public BoardDTO(BoardEntity e) {
     this.bno = e.getBno();
+    this.title = e.getTitle();
+    this.category = e.getCategory();
     this.content = e.getContent();
     this.createdAt = e.getCreatedAt();
     this.modifiedAt = e.getModifiedAt();
@@ -37,6 +40,7 @@ public class BoardDTO {
         .bno(this.bno)
         .title(this.title)
         .content(this.content)
+        .category(this.category)
         .build();
 
     return e;

@@ -2,6 +2,7 @@ package org._4.gtree.entity;
 
 import java.time.LocalDate;
 
+import org._4.gtree.dto.BoardDTO;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -9,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +30,10 @@ public class BoardEntity {
   private Long bno;
 
   private String title;
+
+  @Lob
   private String content;
+  private String category;
 
   @CreatedDate
   private LocalDate createdAt;
@@ -41,6 +46,10 @@ public class BoardEntity {
 
   public void setIsDel(Boolean isDel) {
     this.isDel = isDel;
+  }
+
+  public BoardDTO toDTO() {
+    return new BoardDTO(this);
   }
 
 }

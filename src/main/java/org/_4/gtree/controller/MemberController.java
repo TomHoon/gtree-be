@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @Log4j2
 @RequestMapping("/api/v1/member")
+@CrossOrigin("*")
 public class MemberController {
   private final MemberService memberService;
 

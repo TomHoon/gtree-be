@@ -51,4 +51,10 @@ public class BoardService {
     boardRepository.save(e);
   }
 
+  public BoardDTO writeBoard(BoardDTO dto) {
+    BoardEntity e = dto.toEntity();
+    BoardEntity b = boardRepository.save(e);
+    return b.toDTO();
+  }
+
 }
