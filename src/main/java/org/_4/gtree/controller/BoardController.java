@@ -52,6 +52,12 @@ public class BoardController {
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
   }
 
+  @GetMapping("/{bno}")
+  public ResponseEntity<ApiResponse<BoardDTO>> getBoardByBno(@PathVariable Long bno) {
+    BoardDTO dto = boardService.getBoardByBno(bno);
+    return ResponseEntity.ok(ApiResponse.success(dto));
+  }
+
   @GetMapping("/getBoardByPage")
   public ResponseEntity<ApiResponse<PageResponseDTO>> getBoardByPage(@RequestParam Map<String, Object> param) {
     int size = (int) param.get("size");

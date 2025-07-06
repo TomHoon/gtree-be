@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 import org._4.gtree.dto.BoardDTO;
 import org._4.gtree.dto.PageResponseDTO;
 import org._4.gtree.entity.BoardEntity;
+import org._4.gtree.entity.MemberEntity;
 import org._4.gtree.repository.BoardRepository;
+import org._4.gtree.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,12 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
   private final BoardRepository boardRepository;
+  private final MemberRepository memberRepository;
+
+  public BoardDTO getBoardByBno(Long bno) {
+    BoardEntity e = boardRepository.findById(bno).orElseThrow();
+    return new BoardDTO(e);
+  }
 
   public List<BoardDTO> getBoardAll() {
     List<BoardDTO> list = boardRepository.findAll()
@@ -38,7 +46,10 @@ public class BoardService {
   }
 
   public BoardDTO updateBoard(BoardDTO dto) {
-    BoardEntity e = dto.toEntity();
+    String writer = dto.getWriter();
+    MemberEntity me = memberRepository.findByUserId(writer).orElseThrow();
+    
+    BoardEntity e = dto.toEntity(me);
     BoardEntity updatedEntity = boardRepository.save(e);
     return new BoardDTO(updatedEntity);
   }
@@ -52,7 +63,11 @@ public class BoardService {
   }
 
   public BoardDTO writeBoard(BoardDTO dto) {
-    BoardEntity e = dto.toEntity();
+    String writer = dto.getWriter();
+    MemberEntity me = memberRepository.findByUserId(writer).orElseThrow();
+
+    BoardEntity e = dto.toEntity(me);
+    
     BoardEntity b = boardRepository.save(e);
     return b.toDTO();
   }
