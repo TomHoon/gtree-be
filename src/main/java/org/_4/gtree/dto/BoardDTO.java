@@ -1,8 +1,12 @@
 package org._4.gtree.dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org._4.gtree.entity.BoardEntity;
+import org._4.gtree.entity.FileInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +29,9 @@ public class BoardDTO {
 
   private Boolean isDel;
 
+  private List<String> files = new ArrayList<>();
+  private List<FileInfo> files = new ArrayList<>();
+
   public BoardDTO(BoardEntity e) {
     this.bno = e.getBno();
     this.title = e.getTitle();
@@ -33,6 +40,7 @@ public class BoardDTO {
     this.createdAt = e.getCreatedAt();
     this.modifiedAt = e.getModifiedAt();
     this.isDel = e.getIsDel();
+    this.files = e.getFiles().stream().map(item -> item.getFilePath()).collect(Collectors.toList());
   }
 
   public BoardEntity toEntity() {

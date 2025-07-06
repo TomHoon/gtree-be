@@ -21,6 +21,7 @@ public class MemberDTO {
   public MemberDTO(MemberEntity e) {
     this.mno = e.getMno();
     this.userId = e.getUserId();
+    this.pw = e.getPw();
     this.degree = e.getDegree();
     this.nickname = e.getNickname();
     this.isSocial = e.getIsSocial();

@@ -1,15 +1,23 @@
 package org._4.gtree.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org._4.gtree.dto.BoardDTO;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -23,6 +31,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @Table(name = "tbl_board")
+@EntityListeners(AuditingEntityListener.class)
 public class BoardEntity {
 
   @Id
@@ -43,6 +52,13 @@ public class BoardEntity {
 
   @Builder.Default
   private Boolean isDel = false;
+
+  @ElementCollection
+  @CollectionTable(
+    name = "tbl_board_file", 
+    joinColumns = @JoinColumn(name = "board_bno")
+  )
+  private List<FileInfo> files = new ArrayList<>();
 
   public void setIsDel(Boolean isDel) {
     this.isDel = isDel;
