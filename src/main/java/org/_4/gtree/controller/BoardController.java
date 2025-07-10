@@ -1,6 +1,6 @@
 package org._4.gtree.controller;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -45,11 +44,19 @@ public class BoardController {
   private final BoardService boardService;
   private final FileUtil fileUtil;
 
+  @SuppressWarnings("unchecked")
   @GetMapping("/getBoardAll")
-  public ResponseEntity<ApiResponse<List<BoardDTO>>> getBoardAll() {
-    List<BoardDTO> list = boardService.getBoardAll();
+  public ResponseEntity<ApiResponse<PageResponseDTO>> getBoardAll(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size) {
 
-    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(list));
+    Map<String, Object> map = new HashMap<>();
+    map.put("page", page);
+    map.put("size", size);
+
+    PageResponseDTO<BoardDTO> pageResponse = boardService.getBoardAll(map);
+
+    return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageResponse));
   }
 
   @GetMapping("/{bno}")
@@ -58,10 +65,19 @@ public class BoardController {
     return ResponseEntity.ok(ApiResponse.success(dto));
   }
 
+  @GetMapping("/getCounts")
+  public ResponseEntity<ApiResponse<Map<String, Object>>> getCounts() {
+    Map<String, Object> map = boardService.getCounts();
+    return ResponseEntity.ok(ApiResponse.success(map));
+  }
+
   @GetMapping("/getBoardByPage")
-  public ResponseEntity<ApiResponse<PageResponseDTO>> getBoardByPage(@RequestParam Map<String, Object> param) {
-    int size = (int) param.get("size");
-    int page = (int) param.get("page");
+  public ResponseEntity<ApiResponse<PageResponseDTO>> getBoardByPage(
+      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "공지사항") String category
+
+  ) {
 
     PageRequestDTO dto = PageRequestDTO.builder()
         .page(page)
@@ -70,7 +86,7 @@ public class BoardController {
 
     Pageable pageable = dto.getPageable(Sort.by("bno"));
 
-    PageResponseDTO<BoardDTO> pageResponse = boardService.getBoardByPage(pageable);
+    PageResponseDTO<BoardDTO> pageResponse = boardService.getBoardByPage(pageable, category);
 
     return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageResponse));
   }
@@ -93,14 +109,15 @@ public class BoardController {
 
   @PostMapping("/write")
   public ResponseEntity<ApiResponse<BoardDTO>> writeBoard(@RequestPart("board") BoardDTO dto,
-      @RequestPart(value = "attachList", required = false) List<MultipartFile> attachList) throws JsonMappingException, JsonProcessingException {
+      @RequestPart(value = "attachList", required = false) List<MultipartFile> attachList)
+      throws JsonMappingException, JsonProcessingException {
 
     if (attachList != null && attachList.size() > 0) {
       List<FileInfo> infoList = attachList
           .stream()
           .map(item -> new FileInfo(fileUtil.saveFile(item), fileUtil.saveFile(item)))
           .collect(Collectors.toList());
-          
+
       log.info(">>>> infoList  {} ", infoList);
       System.out.println(">>>> infoList " + infoList);
       dto.setFiles(infoList);

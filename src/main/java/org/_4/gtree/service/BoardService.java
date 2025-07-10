@@ -1,11 +1,11 @@
 package org._4.gtree.service;
 
-import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org._4.gtree.dto.BoardDTO;
+import org._4.gtree.dto.PageRequestDTO;
 import org._4.gtree.dto.PageResponseDTO;
 import org._4.gtree.entity.BoardEntity;
 import org._4.gtree.entity.MemberEntity;
@@ -13,6 +13,7 @@ import org._4.gtree.repository.BoardRepository;
 import org._4.gtree.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -29,17 +30,35 @@ public class BoardService {
     return new BoardDTO(e);
   }
 
-  public List<BoardDTO> getBoardAll() {
-    List<BoardDTO> list = boardRepository.findAll()
-        .stream()
-        .map(e -> new BoardDTO(e))
-        .collect(Collectors.toList());
+  public PageResponseDTO getBoardAll(Map<String, Object> map) {
+    int page = (int) map.get("page");
+    int size = (int) map.get("size");
 
-    return list;
+    PageRequestDTO dto = PageRequestDTO.builder()
+        .page(page)
+        .size(size)
+        .build();
+
+    Pageable pageable = dto.getPageable(Sort.by("bno"));
+    Page<BoardDTO> res = boardRepository.findAll(pageable).map(BoardDTO::new);
+
+    PageResponseDTO resDTO = new PageResponseDTO<>(res);
+
+    int currentGroup = page / size;
+    int startPage = currentGroup * size + 1;
+    int endPage = Math.min(startPage + size - 1, res.getTotalPages());
+
+    boolean hasNextGroup = startPage > 1;
+    boolean hasPrevGroup = endPage < res.getTotalPages();
+
+    resDTO.setHasNextGroup(hasNextGroup);
+    resDTO.setHasPreviousGroup(hasPrevGroup);
+
+    return resDTO;
   }
 
-  public PageResponseDTO getBoardByPage(Pageable pageable) {
-    Page<BoardEntity> res = boardRepository.findAll(pageable);
+  public PageResponseDTO getBoardByPage(Pageable pageable, String category) {
+    Page<BoardEntity> res = boardRepository.findAllByCategory(category, pageable);
     Page<BoardDTO> page = res.map(e -> new BoardDTO(e));
 
     return new PageResponseDTO<>(page);
@@ -48,7 +67,7 @@ public class BoardService {
   public BoardDTO updateBoard(BoardDTO dto) {
     String writer = dto.getWriter();
     MemberEntity me = memberRepository.findByUserId(writer).orElseThrow();
-    
+
     BoardEntity e = dto.toEntity(me);
     BoardEntity updatedEntity = boardRepository.save(e);
     return new BoardDTO(updatedEntity);
@@ -67,9 +86,13 @@ public class BoardService {
     MemberEntity me = memberRepository.findByUserId(writer).orElseThrow();
 
     BoardEntity e = dto.toEntity(me);
-    
+
     BoardEntity b = boardRepository.save(e);
     return b.toDTO();
+  }
+
+  public Map<String, Object> getCounts() {
+    return boardRepository.getCounts();
   }
 
 }

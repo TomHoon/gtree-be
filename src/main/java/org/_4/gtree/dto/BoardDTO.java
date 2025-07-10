@@ -47,7 +47,11 @@ public class BoardDTO {
     if (e.getMemberEntity() != null) {
       this.writer = e.getMemberEntity().getUserId();
     }
-    // this.files = e.getFiles().stream().map(item -> item.getFilePath()).collect(Collectors.toList());
+    if (e.getFiles().size() > 0) {
+      this.files = e.getFiles();
+    }
+    // this.files = e.getFiles().stream().map(item ->
+    // item.getFilePath()).collect(Collectors.toList());
   }
 
   public BoardEntity toEntity(MemberEntity me) {
@@ -57,6 +61,7 @@ public class BoardDTO {
         .content(this.content)
         .category(this.category)
         .memberEntity(me)
+        .files(this.files)
         .build();
 
     return e;
